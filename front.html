@@ -24,7 +24,6 @@
             color: white;
             border-color: #4f46e5;
         }
-        /* For the card carousel on small screens */
         .card-carousel {
             scrollbar-width: none; /* Firefox */
             -ms-overflow-style: none;  /* Internet Explorer 10+ */
@@ -50,7 +49,6 @@
 
         // --- Helper Components ---
         
-        // Icon for the Copy button
         const CopyIcon = ({ copied }) => (
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 {copied ? (
@@ -64,7 +62,6 @@
             </svg>
         );
 
-        // Skeleton loader for when the API is fetching results
         const SkeletonLoader = () => (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-pulse">
                 {[...Array(3)].map((_, i) => (
@@ -101,10 +98,10 @@
                 setGeneratedMessages([]);
                 setCopySuccessIndex(null);
                 
-                // The backend server URL
-                const backendUrl = 'http://localhost:5001/api/generate';
+                // *** IMPORTANT CHANGE FOR DEPLOYMENT ***
+                // Use a relative path so it works on Render.
+                const backendUrl = '/api/generate';
                 
-                // We modify the prompt to ask for 3 variations in a JSON format
                 const fullPrompt = `Based on the following request, generate 3 distinct WhatsApp message variations. The user's request is: "${prompt}". The desired tone is "${tone}". Respond with ONLY a valid JSON array of 3 strings. Example: ["Message 1", "Message 2", "Message 3"]`;
 
                 try {
@@ -121,7 +118,6 @@
                     
                     const data = await response.json();
                     
-                    // The AI might return a string that looks like an array. We need to parse it.
                     try {
                         const parsedMessages = JSON.parse(data.message);
                         if (Array.isArray(parsedMessages) && parsedMessages.length > 0) {
@@ -131,7 +127,6 @@
                         }
                     } catch (parseError) {
                         console.error("Failed to parse AI response:", data.message);
-                        // Fallback: If parsing fails, show the raw message as a single option.
                         setGeneratedMessages([data.message]);
                     }
 
@@ -160,15 +155,12 @@
                     <div className="w-full max-w-4xl mx-auto">
                         <div className="bg-white border border-gray-200/80 rounded-2xl shadow-lg shadow-gray-200/50 p-6 md:p-10 space-y-8">
                             
-                            {/* Header */}
                             <header className="text-center">
                                 <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">AI Message Idea Deck</h1>
                                 <p className="text-gray-500 mt-3 max-w-xl mx-auto">Get multiple message options in seconds. Describe your goal, pick a tone, and let AI write for you.</p>
                             </header>
 
-                            {/* Form */}
                             <form onSubmit={handleGenerate} className="space-y-6">
-                                {/* Prompt Input */}
                                 <div>
                                     <label htmlFor="prompt" className="block text-sm font-semibold text-gray-800 mb-2">1. What's the message about?</label>
                                     <textarea
@@ -182,7 +174,6 @@
                                     />
                                 </div>
 
-                                {/* Tone Selector */}
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-800 mb-2">2. What's the tone?</label>
                                     <div className="flex flex-wrap gap-2">
@@ -199,7 +190,6 @@
                                     </div>
                                 </div>
                                 
-                                {/* Submit Button */}
                                 <button
                                     type="submit"
                                     disabled={isLoading}
@@ -208,8 +198,7 @@
                                     {isLoading ? 'Crafting Ideas...' : '✨ Generate Ideas'}
                                 </button>
                             </form>
-
-                            {/* Results Section */}
+                            
                             {(isLoading || error || generatedMessages.length > 0) && (
                                 <div className="border-t border-gray-200 pt-8">
                                     <h2 className="text-xl font-bold text-gray-800 mb-4">Your Message Ideas</h2>
@@ -241,7 +230,6 @@
             );
         };
 
-        // Render the app
         const container = document.getElementById('root');
         const root = ReactDOM.createRoot(container);
         root.render(<App />);
